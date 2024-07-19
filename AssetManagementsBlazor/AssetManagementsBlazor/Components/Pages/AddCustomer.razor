@@ -1,0 +1,53 @@
+﻿@page "/edit-customer/"
+@page "/edit-customer/{CustomersOid:guid}"
+
+<h3>Edit Customer</h3>
+
+<EditForm Model="customer" OnSubmit="HandleSubmit">
+    <div class="form-group">
+    <label>First Name</label>
+        <InputText @bind-Value="customer.FirstName">@customer.FirstName</InputText>
+    </div>
+     <div class="form-group">
+    <label>Last Name</label>
+            <InputText @bind-Value="customer.LastName">@customer.LastName</InputText>
+    </div>
+     <div class="form-group">
+    <label>Email</label>
+            <InputText @bind-Value="customer.Email">@customer.Email</InputText>
+     </div>
+      <div class="form-group">
+    <label>Phone Number</label>
+            <InputText @bind-Value="customer.PhoneNumber">@customer.PhoneNumber</InputText>
+    </div>
+     <div class="form-group">
+    <label>City</label>
+            <InputText @bind-Value="customer.City">@customer.City</InputText>
+    </div>
+     <div class="form-group">
+    <label>Birthday</label>
+    <InputDate @bind-Value="customer.Birthday">@customer.Birthday</InputDate>
+    </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+    @code {
+    Customers customer = new Customers { 
+        FirstName = string.Empty,
+        LastName = string.Empty,
+        Email = string.Empty,
+        PhoneNumber = string.Empty,
+        City = string.Empty,
+        Birthday = default(DateTime)
+    };
+
+    async Task HandleSubmit()
+    {
+        
+    }
+
+
+    
+
+}

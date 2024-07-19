@@ -1,0 +1,41 @@
+﻿@page "/Customers"
+@inject ICustomerService CustomerService
+@inject NavigationManager NavigationManager
+@attribute [StreamRendering(true)]
+@rendermode InteractiveServer
+
+<h3>Customer List</h3>
+
+@if (customers == null)
+{
+    <span>Loading...</span>
+}
+else if (customers.Count == 0)
+{
+    <span>No Customers Found </span>
+}
+else
+{
+    <ul>
+        @foreach (var customer in customers)
+        {
+            <li>@customer.FirstName</li>
+        }
+    </ul>
+    <></>
+}
+<button @onclick="CreateCustomer" class="btn btn-primary">Create Customer</button>
+
+@code {
+    List<Customers>? customers = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await CustomerService.GetAllCustomer();
+    }
+
+    void CreateCustomer()
+    {
+        NavigationManager.NavigateTo("/edit-customer");
+    }
+}
