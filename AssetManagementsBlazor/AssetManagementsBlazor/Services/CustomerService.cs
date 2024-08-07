@@ -13,6 +13,15 @@ namespace AssetManagementsBlazor.Services
         {
             _context = context;
         }
+
+        public async Task<Customers> AddCustomer(Customers customer)
+        {
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+
+            return customer;
+        }
+
         public async Task<List<Customers>> GetAllCustomer()
         {
             await Task.Delay(1000);

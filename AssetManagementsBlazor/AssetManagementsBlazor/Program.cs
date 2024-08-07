@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
 builder.Services.AddDbContext<AssetDataContext>(Options =>
     Options.UseSqlServer(builder.Configuration
     .GetConnectionString("ConnectionString")));

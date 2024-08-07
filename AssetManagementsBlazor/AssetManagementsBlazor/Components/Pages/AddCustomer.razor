@@ -1,39 +1,64 @@
 ﻿@page "/edit-customer/"
 @page "/edit-customer/{CustomersOid:guid}"
+@inject ICustomerService CustomerService
 
 <h3>Edit Customer</h3>
 
-<EditForm Model="customer" OnSubmit="HandleSubmit">
+<EditForm Model="customer" OnSubmit="HandleSubmit" FormName="AddCustomer">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <InputText id="firstName" @bind-Value="customer.FirstName" class="form-control"></InputText>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <InputText id="lastName" @bind-Value="customer.LastName" class="form-control"></InputText>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <InputText id="email" @bind-Value="customer.Email" class="form-control"></InputText>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+                <InputText id="phoneNumber" @bind-Value="customer.PhoneNumber" class="form-control"></InputText>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="city">City</label>
+                <InputText id="city" @bind-Value="customer.City" class="form-control"></InputText>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="birthday">Birthday</label>
+                <InputDate id="birthday" @bind-Value="customer.Birthday" class="form-control"></InputDate>
+            </div>
+        </div>
+    </div>
     <div class="form-group">
-    <label>First Name</label>
-        <InputText @bind-Value="customer.FirstName">@customer.FirstName</InputText>
-    </div>
-     <div class="form-group">
-    <label>Last Name</label>
-            <InputText @bind-Value="customer.LastName">@customer.LastName</InputText>
-    </div>
-     <div class="form-group">
-    <label>Email</label>
-            <InputText @bind-Value="customer.Email">@customer.Email</InputText>
-     </div>
-      <div class="form-group">
-    <label>Phone Number</label>
-            <InputText @bind-Value="customer.PhoneNumber">@customer.PhoneNumber</InputText>
-    </div>
-     <div class="form-group">
-    <label>City</label>
-            <InputText @bind-Value="customer.City">@customer.City</InputText>
-    </div>
-     <div class="form-group">
-    <label>Birthday</label>
-    <InputDate @bind-Value="customer.Birthday">@customer.Birthday</InputDate>
-    </div>
-
         <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
 </EditForm>
 
-    @code {
-    Customers customer = new Customers { 
+
+@code {
+    [Parameter]
+    public Guid CustomersOid { get; set; }
+    [SupplyParameterFromForm]
+    Customers customer { get; set; } = new Customers
+        {
         FirstName = string.Empty,
         LastName = string.Empty,
         Email = string.Empty,
@@ -44,7 +69,7 @@
 
     async Task HandleSubmit()
     {
-        
+        await CustomerService.AddCustomer(customer);
     }
 
 

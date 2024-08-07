@@ -1,8 +1,9 @@
 ﻿@page "/Customers"
 @inject ICustomerService CustomerService
-@inject NavigationManager NavigationManager
-@attribute [StreamRendering(true)]
-@rendermode InteractiveServer
+@* @inject NavigationManager NavigationManager *@
+@attribute [StreamRendering(false)]
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
 
 <h3>Customer List</h3>
 
@@ -22,9 +23,8 @@ else
             <li>@customer.FirstName</li>
         }
     </ul>
-    <></>
 }
-<button @onclick="CreateCustomer" class="btn btn-primary">Create Customer</button>
+<CreateCustomerButton></CreateCustomerButton>
 
 @code {
     List<Customers>? customers = null;
@@ -34,8 +34,5 @@ else
         customers = await CustomerService.GetAllCustomer();
     }
 
-    void CreateCustomer()
-    {
-        NavigationManager.NavigateTo("/edit-customer");
-    }
+    
 }
