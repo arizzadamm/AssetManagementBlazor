@@ -1,8 +1,13 @@
 ﻿@page "/Customers"
+@using AssetManagementsBlazor.Components.Pages.Dialog
 @inject ICustomerService CustomerService
-@* @inject NavigationManager NavigationManager *@
+@inject NavigationManager NavigationManager
 @attribute [StreamRendering(false)]
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@rendermode @(new InteractiveServerRenderMode(prerender: true))
+@inject MudBlazor.IDialogService DialogService
+@inject MudBlazor.ISnackbar Snackbar
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 
 <h3>Customer List</h3>
@@ -21,6 +26,11 @@ else
         @foreach (var customer in customers)
         {
             <li>@customer.FirstName</li>
+            <li>@customer.LastName</li>
+            <li>@customer.City</li>
+            <MudButton OnClick="() => OpenDeleteConfirmationDialog(customer.CustomersOid)" Color="Color.Error" Variant="Variant.Filled">
+                Delete
+            </MudButton>
         }
     </ul>
 }
@@ -33,6 +43,21 @@ else
     {
         customers = await CustomerService.GetAllCustomer();
     }
+    private async Task OpenDeleteConfirmationDialog(Guid customersOid)
+    {
+        var options = new DialogOptions { CloseButton = true };
 
-    
+        var dialog = DialogService.Show<DeleteConfirmationDialog>("Delete Confirmation", options);
+        var result = await dialog.Result;
+        if (!result.Canceled && (bool)result.Data)
+        {
+            await DeleteCustomer(customersOid);
+            Snackbar.Add("Customer deleted successfully", Severity.Success);
+        }
+    }
+
+    private async Task DeleteCustomer(Guid customersOid)
+    {
+        await CustomerService.DeleteCustomer(customersOid);
+    }
 }

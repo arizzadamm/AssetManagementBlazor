@@ -3,6 +3,7 @@ using AssetManagementsBlazor.Components;
 using AssetManagementsBlazor.Data;
 using AssetManagementsBlazor.Services;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContext<AssetDataContext>(Options =>
     Options.UseSqlServer(builder.Configuration
     .GetConnectionString("ConnectionString")));
+
+builder.Services.AddMudServices();
+
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 

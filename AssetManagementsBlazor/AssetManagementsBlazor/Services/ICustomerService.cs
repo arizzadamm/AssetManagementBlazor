@@ -6,5 +6,6 @@ namespace AssetManagementsBlazor.Services
     {
         Task<List<Customers>> GetAllCustomer();
         Task<Customers>AddCustomer(Customers customer);
+        Task<bool>DeleteCustomer(Guid CustomersOid);
     }
 }
