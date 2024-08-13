@@ -1,0 +1,55 @@
+﻿@page "/Category"
+@using AssetManagementsBlazor.Components.Pages.Dialog
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+@attribute [StreamRendering(false)]
+@rendermode @(new InteractiveServerRenderMode(prerender: true))
+@inject MudBlazor.IDialogService DialogService
+@inject MudBlazor.ISnackbar Snackbar
+
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<h3>Category List</h3>
+
+<MudTable Items="@categories" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Daftar Category</MudText>
+        <MudSpacer />
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Category Name</MudTh>
+        <MudTh>Action</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Name</MudTd>
+            <MudTd>
+                <MudButton OnClick="() => OpenDeleteDialog(categories.Name, () => DeleteCategory(categories.CategoryOid))" Color="Color.Error">
+                    Delete
+                </MudButton>
+            </MudTd>
+    </RowTemplate>
+</MudTable>
+
+
+    @code {
+    private bool _loading;
+
+    List<Category>? categories = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryService.GetAllCategory();
+    }
+
+    private async Task OpenDeleteDialog(string itemName, Func<Task> onDeleteConfirmed)
+    {
+        var parameters = new DialogParameters
+        {
+            { "ItemName", itemName },
+            { "OnDeleteConfirmed", EventCallback.Factory.Create(this, onDeleteConfirmed) }
+        };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small };
+        DialogService.Show<DeleteDialog>("Delete Confirmation", parameters, options);
+    }
+}

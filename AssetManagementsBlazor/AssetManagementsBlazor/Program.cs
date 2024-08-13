@@ -20,6 +20,7 @@ builder.Services.AddMudServices();
 
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 var app = builder.Build();
 

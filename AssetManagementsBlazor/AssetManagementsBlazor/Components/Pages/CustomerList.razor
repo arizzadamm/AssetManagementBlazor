@@ -6,6 +6,7 @@
 @rendermode @(new InteractiveServerRenderMode(prerender: true))
 @inject MudBlazor.IDialogService DialogService
 @inject MudBlazor.ISnackbar Snackbar
+
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -22,17 +23,41 @@ else if (customers.Count == 0)
 }
 else
 {
-    <ul>
-        @foreach (var customer in customers)
+    <MudTable Items="@customers" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Daftar Customer</MudText>
+            <MudSpacer />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>First Name</MudTh>
+            <MudTh>Last Name</MudTh>
+            <MudTh>City</MudTh>
+            <MudTh> Action </MudTh>
+        </HeaderContent> 
+        <RowTemplate>
+            <MudTd>@context.FirstName</MudTd>
+            <MudTd>@context.LastName</MudTd>
+             <MudTd>@context.City</MudTd>
+                <MudTd>
+                    <MudButton OnClick="() => OpenDeleteConfirmationDialog(context.CustomersOid)" Color="Color.Error" Variant="Variant.Filled">
+                        Delete
+                    </MudButton>
+                </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+       @*  @foreach (var customer in customers)
         {
-            <li>@customer.FirstName</li>
-            <li>@customer.LastName</li>
-            <li>@customer.City</li>
+
+            <td>@customer.FirstName</td>
+            <td>@customer.LastName</td>
+            <td>@customer.City</td>
+            <td>
             <MudButton OnClick="() => OpenDeleteConfirmationDialog(customer.CustomersOid)" Color="Color.Error" Variant="Variant.Filled">
                 Delete
             </MudButton>
-        }
-    </ul>
+            </td>
+        } *@
 }
 <CreateCustomerButton></CreateCustomerButton>
 
@@ -60,4 +85,6 @@ else
     {
         await CustomerService.DeleteCustomer(customersOid);
     }
+
+    private bool _loading;
 }
