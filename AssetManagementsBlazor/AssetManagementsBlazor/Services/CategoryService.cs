@@ -49,12 +49,12 @@ namespace AssetManagementsBlazor.Services
         {
             try
             {
-                var category = await _context.Customers.FindAsync(CategoryOid);
+                var category = await _context.Category.FindAsync(CategoryOid);
                 if (category == null)
                 {
                     return false;
                 }
-                _context.Customers.Remove(category);
+                _context.Category.Remove(category);
                 await _context.SaveChangesAsync();
                 return true;
             }

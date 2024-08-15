@@ -1,0 +1,36 @@
+﻿@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6">Add New Category</MudText>
+        <MudForm @ref="form" OnValidSubmit="HandleValidSubmit">
+            <MudTextField @bind-Value="CategoryName" Label="Category Name" Required="true" />
+        </MudForm>
+    </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Secondary" OnClick="@Cancel">Cancel</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" OnClick="@SubmitForm">Save</MudButton>
+        </DialogActions>
+</MudDialog>
+
+    @code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string CategoryName { get; set; }
+    private MudForm form;
+    private void Cancel() => MudDialog.Cancel();
+
+    // private void Confirm() => MudDialog.Close(DialogResult.Ok(true));
+    private async Task HandleValidSubmit()
+    {
+        MudDialog.Close(DialogResult.Ok(CategoryName));
+    }
+
+    private void SubmitForm()
+    {
+        form?.Validate();
+        if (form.IsValid)
+        {
+            HandleValidSubmit();
+        }
+    }
+}

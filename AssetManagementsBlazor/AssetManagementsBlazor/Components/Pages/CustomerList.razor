@@ -3,7 +3,7 @@
 @inject ICustomerService CustomerService
 @inject NavigationManager NavigationManager
 @attribute [StreamRendering(false)]
-@rendermode @(new InteractiveServerRenderMode(prerender: true))
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @inject MudBlazor.IDialogService DialogService
 @inject MudBlazor.ISnackbar Snackbar
 
@@ -39,7 +39,7 @@ else
             <MudTd>@context.LastName</MudTd>
              <MudTd>@context.City</MudTd>
                 <MudTd>
-                    <MudButton OnClick="() => OpenDeleteConfirmationDialog(context.CustomersOid)" Color="Color.Error" Variant="Variant.Filled">
+                    <MudButton OnClick="() => OpenDeleteDialog(context.FirstName,context.CustomersOid)" Color="Color.Error" Variant="Variant.Filled">
                         Delete
                     </MudButton>
                 </MudTd>
@@ -68,23 +68,37 @@ else
     {
         customers = await CustomerService.GetAllCustomer();
     }
-    private async Task OpenDeleteConfirmationDialog(Guid customersOid)
+    private async Task OpenDeleteDialog(string FirstName, Guid CustomersOid)
     {
-        var options = new DialogOptions { CloseButton = true };
-
-        var dialog = DialogService.Show<DeleteConfirmationDialog>("Delete Confirmation", options);
-        var result = await dialog.Result;
-        if (!result.Canceled && (bool)result.Data)
+        var parameters = new DialogParameters
         {
-            await DeleteCustomer(customersOid);
+            { "ItemName", FirstName },
+            { "CategoryOid", CustomersOid }
+        };
+
+        var dialog = DialogService.Show<DeleteDialog>("Delete Confirmation", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            // Handle deletion confirmation
+            await CustomerService.DeleteCustomer(CustomersOid);
             Snackbar.Add("Customer deleted successfully", Severity.Success);
         }
     }
+    // private async Task OpenDeleteConfirmationDialog(Guid customersOid)
+    // {
+    //     var options = new DialogOptions { CloseButton = true };
 
-    private async Task DeleteCustomer(Guid customersOid)
-    {
-        await CustomerService.DeleteCustomer(customersOid);
-    }
+    //     var dialog = DialogService.Show<DeleteConfirmationDialog>("Delete Confirmation", options);
+    //     var result = await dialog.Result;
+    //     if (!result.Canceled && (bool)result.Data)
+    //     {
+    //         await DeleteCustomer(customersOid);
+    //         Snackbar.Add("Customer deleted successfully", Severity.Success);
+    //     }
+    // }
+
 
     private bool _loading;
 }
