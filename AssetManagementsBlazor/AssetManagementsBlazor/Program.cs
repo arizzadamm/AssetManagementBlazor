@@ -14,13 +14,17 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddDbContext<AssetDataContext>(Options =>
     Options.UseSqlServer(builder.Configuration
-    .GetConnectionString("ConnectionString")));
+    .GetConnectionString("ConnectionString")), ServiceLifetime.Scoped);
 
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(options =>
+{
+    options.PopoverOptions.ThrowOnDuplicateProvider = false;
+});
 
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
 

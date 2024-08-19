@@ -1,5 +1,6 @@
 ﻿using AssetManagementsBlazor.Data;
 using AssetManagementsBlazor.Entities;
+using AssetManagementsBlazor.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using static MudBlazor.Icons;
 
@@ -42,6 +43,26 @@ namespace AssetManagementsBlazor.Services
             {
                 // Logging or handling the error
                 throw new ApplicationException("An error occurred while updating the category.", ex);
+            }
+        }
+        public async Task<List<CategoryViewModel>> GetAllCategories()
+        {
+            try
+            {
+                var categories = await _context.Category
+                    .Select(c => new CategoryViewModel
+                    {
+                        CategoryOid = c.CategoryOid,
+                        Name = c.Name
+                    })
+                    .ToListAsync();
+
+                return categories;
+            }
+            catch (Exception ex)
+            {
+                // Logging atau penanganan error
+                throw new ApplicationException("An error occurred while fetching categories.", ex);
             }
         }
 

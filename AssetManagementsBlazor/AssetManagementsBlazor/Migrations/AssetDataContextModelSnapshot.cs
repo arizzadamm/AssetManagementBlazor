@@ -33,7 +33,7 @@ namespace AssetManagementsBlazor.Migrations
 
                     b.HasKey("CategoryOid");
 
-                    b.ToTable("Category");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("AssetManagementsBlazor.Entities.Customers", b =>
@@ -62,7 +62,7 @@ namespace AssetManagementsBlazor.Migrations
 
                     b.HasKey("CustomersOid");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("AssetManagementsBlazor.Entities.OrderDetail", b =>
@@ -85,7 +85,7 @@ namespace AssetManagementsBlazor.Migrations
 
                     b.HasKey("OrderDetailOid");
 
-                    b.ToTable("OrderDetails");
+                    b.ToTable("OrderDetails", (string)null);
                 });
 
             modelBuilder.Entity("AssetManagementsBlazor.Entities.Orders", b =>
@@ -102,7 +102,7 @@ namespace AssetManagementsBlazor.Migrations
 
                     b.HasKey("OrderOid");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("AssetManagementsBlazor.Entities.Products", b =>
@@ -128,7 +128,7 @@ namespace AssetManagementsBlazor.Migrations
 
                     b.HasKey("ProductOid");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 #pragma warning restore 612, 618
         }

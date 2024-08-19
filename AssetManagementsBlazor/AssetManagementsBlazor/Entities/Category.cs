@@ -7,5 +7,6 @@ namespace AssetManagementsBlazor.Entities
         [Key]
         public Guid CategoryOid { get; set; }
         public string? Name { get; set; }
+
     }
 }

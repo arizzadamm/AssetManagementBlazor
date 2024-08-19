@@ -1,0 +1,117 @@
+﻿@page "/Products"
+@using AssetManagementsBlazor.Components.Pages.Dialog
+@using AssetManagementsBlazor.ViewModel
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+@attribute [StreamRendering(false)]
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@inject MudBlazor.IDialogService DialogService
+@inject MudBlazor.ISnackbar Snackbar
+
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<h3>Product List</h3>
+
+<MudTable Items="@products" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">List Product</MudText>
+        <MudSpacer />
+        <MudSpacer />
+        <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.SendToMobile" OnClick="OpenAddProductDialog" Variant="Variant.Filled">Add Product</MudButton>
+        <MudSpacer />
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Product Name</MudTh>
+        <MudTh>Category</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Price</MudTh>
+        <MudTh>Stock Quantity</MudTh>
+        <MudTh>Action</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.ProductName</MudTd>
+        <MudTh>@context.CategoryName</MudTh>
+        <MudTd>@context.Description</MudTd>
+        <MudTd>@context.Price</MudTd>
+        <MudTd>@context.StockQuantity</MudTd>
+            <MudTd>
+                <MudButton OnClick="() => OpenDeleteDialog(context.ProductName,context.ProductOid)" Color="Color.Error" Variant="Variant.Filled">
+                    Delete
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+
+
+
+    @code {
+    private bool _loading;
+
+    private List<ProductViewModel>? products;
+    private ProductViewModel newProduct = new ProductViewModel();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        products = await ProductService.GetAllProductWithCategory();
+        _loading = false;
+    }
+
+    private async Task OpenDeleteDialog(string ProductName, Guid ProductOid)
+    {
+        var parameters = new DialogParameters
+        {
+            { "ItemName", ProductName },
+            { "CategoryOid", ProductOid }
+        };
+
+        var dialog = DialogService.Show<DeleteDialog>("Delete Confirmation", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            // Handle deletion confirmation
+            await ProductService.DeleteProduct(ProductOid);
+            Snackbar.Add("Category deleted successfully", Severity.Success);
+        }
+    }
+
+    private async Task OpenAddProductDialog()
+    {
+        var parameters = new DialogParameters
+        {
+            { "OnValidSubmit", EventCallback.Factory.Create<ProductViewModel>(this, AddProduct) }
+        };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        DialogService.Show<AddProductDialog>("Add New Product", parameters, options);
+    }
+    private async Task AddProduct(ProductViewModel newProduct)
+    {
+        try
+        {
+            var addedProduct = await ProductService.AddProduct(newProduct);
+            products.Add(new ProductViewModel
+                {
+                    ProductName = addedProduct.ProductName,
+                    CategoryOid = addedProduct.CategoryOid,
+                    Description = addedProduct.Description,
+                    Price = addedProduct.Price,
+                    StockQuantity = addedProduct.StockQuantity
+                });
+            // Tambahkan ke daftar lokal dan refresh tampilan
+            newProduct = new ProductViewModel();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+
+    }
+
+}
