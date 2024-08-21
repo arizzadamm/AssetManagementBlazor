@@ -10,5 +10,6 @@ namespace AssetManagementsBlazor.Entities
         [ForeignKey("CustomerOid")]
         public Guid CustomerOid { get; set; }
         public DateTime OrderDate { get; set; }
+        public string OrderNumber { get; set; }
     }
 }
