@@ -36,13 +36,12 @@ namespace AssetManagementsBlazor.Services
                 throw new ApplicationException("An error occurred while updating the category.", ex);
             }
         }
-        public async Task CreateOrder([FromRoute]  Guid CustomerOid, Guid ProductOid, DateTime OrderDate,
+        public async Task CreateOrder([FromRoute]  Guid CustomerOid, Guid ProductOid,
             int Price,int Qty)
         {
-            await _context.Database.ExecuteSqlRawAsync("EXEC usp_spr_InsertHeader  @CustomerOid,@ProductOid,@Price,@Qty",
+            await _context.Database.ExecuteSqlRawAsync("EXEC usp_Order_CreateOrder  @CustomerOid,@ProductOid,@Price,@Qty",
                 new SqlParameter("@CustomerOid", CustomerOid),
                 new SqlParameter("@ProductOid", ProductOid),
-                new SqlParameter("@OrderDate", OrderDate),
                 new SqlParameter("@Price", Price),
                 new SqlParameter("@Qty", Qty));
         }

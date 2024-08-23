@@ -7,5 +7,6 @@ namespace AssetManagementsBlazor.Services
     {
         Task<List<OrderDetail>> GetAllOrderDetail();
         Task<List<OrderdetailViewModel>> GetOrderDetailbyOrder(Guid OrderOid);
+        Task DeleteOrder(Guid orderOid);
     }
 }

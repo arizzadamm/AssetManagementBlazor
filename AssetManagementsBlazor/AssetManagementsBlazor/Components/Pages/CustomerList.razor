@@ -13,20 +13,21 @@
 
 <h3>Customer List</h3>
 
-@if (customers == null)
+@if (_customers == null)
 {
     <span>Loading...</span>
 }
-else if (customers.Count == 0)
+else if (_customers.Count == 0)
 {
     <span>No Customers Found </span>
 }
 else
 {
-    <MudTable Items="@customers" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <MudTable Items="@_customers" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Daftar Customer</MudText>
             <MudSpacer />
+            <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.SendToMobile" OnClick="OpenAddCustomerDialog" Variant="Variant.Filled">Add Product</MudButton>
         </ToolBarContent>
         <HeaderContent>
             <MudTh>First Name</MudTh>
@@ -45,28 +46,49 @@ else
                 </MudTd>
         </RowTemplate>
     </MudTable>
-
-       @*  @foreach (var customer in customers)
-        {
-
-            <td>@customer.FirstName</td>
-            <td>@customer.LastName</td>
-            <td>@customer.City</td>
-            <td>
-            <MudButton OnClick="() => OpenDeleteConfirmationDialog(customer.CustomersOid)" Color="Color.Error" Variant="Variant.Filled">
-                Delete
-            </MudButton>
-            </td>
-        } *@
 }
-<CreateCustomerButton></CreateCustomerButton>
 
 @code {
-    List<Customers>? customers = null;
+    List<Customers>? _customers = null;
 
     protected override async Task OnInitializedAsync()
     {
-        customers = await CustomerService.GetAllCustomer();
+        _customers = await CustomerService.GetAllCustomer();
+    }
+    private async Task AddCustomer(Customers customers)
+    {
+        try
+        {
+            var addedCustomer = await CustomerService.AddCustomer(customers);
+
+            // Tambahkan ke daftar lokal dan refresh tampilan
+            _customers.Add(addedCustomer);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task OpenAddCustomerDialog()
+    {
+        var parameters = new DialogParameters();
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        var dialog = DialogService.Show<AddCustomerDialog>("Add New Customer", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var newCustomer = result.Data as Customers; // Pastikan Customers adalah model yang sesuai
+            if (newCustomer != null)
+            {
+                await AddCustomer(newCustomer);
+                Snackbar.Add("Customer Add successfully", Severity.Success);
+            }
+        }
+
     }
     private async Task OpenDeleteDialog(string FirstName, Guid CustomersOid)
     {
@@ -84,21 +106,8 @@ else
             // Handle deletion confirmation
             await CustomerService.DeleteCustomer(CustomersOid);
             Snackbar.Add("Customer deleted successfully", Severity.Success);
+            _customers = await CustomerService.GetAllCustomer();
         }
     }
-    // private async Task OpenDeleteConfirmationDialog(Guid customersOid)
-    // {
-    //     var options = new DialogOptions { CloseButton = true };
-
-    //     var dialog = DialogService.Show<DeleteConfirmationDialog>("Delete Confirmation", options);
-    //     var result = await dialog.Result;
-    //     if (!result.Canceled && (bool)result.Data)
-    //     {
-    //         await DeleteCustomer(customersOid);
-    //         Snackbar.Add("Customer deleted successfully", Severity.Success);
-    //     }
-    // }
-
-
     private bool _loading;
 }

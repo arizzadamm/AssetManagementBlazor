@@ -1,1 +1,85 @@
-﻿
+﻿@page "/Add-Order"
+@using AssetManagementsBlazor.Components.Pages.Dialog
+@using AssetManagementsBlazor.ViewModel
+@inject IOrderService OrderService
+@inject IOrderDetailService OrderDetailService
+@inject IProductService ProductService
+@inject ICustomerService CustomerService
+@inject NavigationManager Navigation
+@attribute [StreamRendering(false)]
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@inject MudBlazor.IDialogService DialogService
+@inject MudBlazor.ISnackbar Snackbar
+
+<MudPopoverProvider />
+
+
+<MudPaper Class="pa-4">
+    <MudText Typo="Typo.h4">Add New Order</MudText>
+    <MudForm @ref="form" OnValidSubmit="HandleValidSubmit">
+        <MudSelect @bind-Value="Order.CustomerOid" Label="Customer" Required="true">
+            @foreach (var customer in Customers)
+            {
+                <MudSelectItem Value="@customer.CustomersOid">@customer.FirstName</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudSelect @bind-Value="Order.ProductOid" Label="Product" Required="true">
+            @foreach (var product in Products)
+            {
+                <MudSelectItem Value="@product.ProductOid">@product.ProductName</MudSelectItem>
+            }
+        </MudSelect>
+
+
+        <MudTextField @bind-Value="Order.Qty" Label="Quantity" Required="true" Numeric="true" />
+
+        <MudTextField @bind-Value="Order.Price" Label="Price" Required="true" Numeric="true" Disabled="true" />
+
+        <MudButton OnClick="HandleValidSubmit" Type="Submit" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Save Order</MudButton>
+        <MudButton OnClick="Cancel" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Cancel">Cancel</MudButton>
+    </MudForm>
+</MudPaper>
+
+
+@code{
+    private MudForm form;
+    private OrderViewModel Order = new OrderViewModel();
+    private List<CustomerViewModel> Customers = new List<CustomerViewModel>();
+    private List<ProductViewModel> Products = new List<ProductViewModel>();
+
+    string selectedProduct = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Products = await ProductService.GetAllProductWithCategory();
+        Customers = await CustomerService.GetAllCustomers();
+    }
+    private void OnProductSelected(Guid selectedProductOid)
+    {
+        var selectedProduct = Products.FirstOrDefault(p => p.ProductOid == selectedProductOid);
+        if (selectedProduct != null)
+        {
+            Order.Price = selectedProduct.Price;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        // Logika untuk menambah order ke database
+        await OrderService.CreateOrder(
+            Order.CustomerOid,
+            Order.ProductOid,
+            Order.Price,
+            Order.Qty
+        );
+        Snackbar.Add("Order added successfully", Severity.Success);
+        Navigation.NavigateTo("/orders");
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/orders");
+    }
+    
+}

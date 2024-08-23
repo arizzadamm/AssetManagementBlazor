@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AssetManagementsBlazor.Entities
+﻿namespace AssetManagementsBlazor.ViewModel
 {
-    public class Customers
+    public class CustomerViewModel
     {
-        [Key]
         public Guid CustomersOid { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

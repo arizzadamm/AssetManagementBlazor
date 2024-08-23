@@ -1,6 +1,7 @@
 ﻿
 using AssetManagementsBlazor.Data;
 using AssetManagementsBlazor.Entities;
+using AssetManagementsBlazor.ViewModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace AssetManagementsBlazor.Services
@@ -39,6 +40,38 @@ namespace AssetManagementsBlazor.Services
             await Task.Delay(1000);
             var customers = await _context.Customers.ToListAsync();
             return customers;
+        }
+
+        public async Task<List<CustomerViewModel>> GetAllCustomers()
+        {
+            try
+            {
+                var customers = await _context.Customers
+                    .Select(c => new CustomerViewModel
+                    {
+                        CustomersOid = c.CustomersOid,
+                         FirstName = c.FirstName,
+                         LastName = c.LastName,
+                         Email = c.Email,
+                         PhoneNumber = c.PhoneNumber,
+                         City = c.City,
+                         Birthday = c.Birthday
+                    })
+                    .ToListAsync();
+
+                return customers;
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new ApplicationException("An error occurred while fetching Customers.", ex);
+            }
+        }
+
+        public async Task<CustomerViewModel> GetCustomerbyId(Guid CustomerOid)
+        {
+            throw new NotImplementedException();
         }
     }
 }

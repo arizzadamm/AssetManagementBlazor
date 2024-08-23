@@ -9,8 +9,8 @@ namespace AssetManagementsBlazor.ViewModel
         public Guid OrderDetailOid { get; set; }
         public Guid ProductOid { get; set; }
         public DateTime OrderDate { get; set; }
-        public required string CustomerName { get; set; }
-        public required string OrderNumber { get; set; }
+        public string CustomerName { get; set; }
+        public string OrderNumber { get; set; }
         public int Price { get; set; }
         public int Qty { get; set; }
     }
